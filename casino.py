@@ -8,7 +8,9 @@ import sys
 import time
 import functools
 import os
-from dice_image import dice_pic
+from dice_img import dice_ascii
+from coin_img import coin_ascii
+from RPS_img import rock_paper_scissors_ascii
 
 AGREE: Tuple[str] = (
     "y",
@@ -141,7 +143,8 @@ class Casino:
             self.money -= bet
 
         self.update_history("dice", bet)
-        print(dice_pic(dice))
+        os.system("cls" if os.name == "nt" else "clear")
+        print(dice_ascii(dice))
         return f"Dice rolled {dice} your prediction was {predict} and your balance is {self.money}"
 
     def flip_coin(self, bet: int, predict: str) -> str:
@@ -166,21 +169,29 @@ class Casino:
         else:
             self.money -= bet
         self.update_history("flip_coin", bet)
+        os.system("cls" if os.name == "nt" else "clear")
+        print(coin_ascii(coin))
         return f"Your prediction was {predict}, coin dropped {coin}, your balance is {self.money}"
 
-    def rock_paper_scissors(self, predict: str, bet: int) -> str:
+    def rock_paper_scissors(self, bet: int, predict: str) -> str:
         options_power = {"rock": "scissors", "scissors": "paper", "paper": "rock"}
         robots_choice = choice(["rock", "paper", "scissors"])
         if options_power[predict] == robots_choice:
             self.money = bet * 2 + self.money
             self.update_history("rock_paper_scissors", bet)
+            os.system("cls" if os.name == "nt" else "clear")
+            print(rock_paper_scissors_ascii(predict, robots_choice))
             return f"You've won, you {predict} enemy {robots_choice}, your balance {self.money}"
         elif robots_choice == predict:
             self.update_history("rock_paper_scissors", bet)
+            os.system("cls" if os.name == "nt" else "clear")
+            print(rock_paper_scissors_ascii(predict, robots_choice))
             return f"It's draw, you {predict} enemy {robots_choice}, your balance {self.money}"
         else:
             self.money -= bet
             self.update_history("rock_paper_scissors", bet)
+            os.system("cls" if os.name == "nt" else "clear")
+            print(rock_paper_scissors_ascii(robots_choice, predict))
             return f"You've lost, you {predict} enemy {robots_choice}, your balance {self.money}"
 
     def slotMachine(self) -> str:
@@ -198,6 +209,7 @@ class Casino:
             return user_results
 
         def ending(jackpot="---------") -> None:
+            os.system("cls" if os.name == "nt" else "clear")
             self.money -= spin_cost
             self.update_history("slotMachine", spin_cost)
             print(f" /{jackpot}\\")
@@ -303,6 +315,7 @@ def game_on():
     play_count = 0
 
     while input(f"Wanna play{" again " if play_count > 0 else ""}?\n") in AGREE:
+        os.system("cls" if os.name == "nt" else "clear")
         play_choice = int(
             input(
                 "What would you like to play:\n"
@@ -334,7 +347,7 @@ def game_on():
         elif play_choice == 4:
             print(f"Your cash amount is {casino.money}$")
             bet = int(input("How much do you wanna bet: \n"))
-            predict = int(input("Choose side of a coin, heads or tails: \n"))
+            predict = input("Rock, paper or scissors\n").lower()
             print(casino.rock_paper_scissors(bet, predict))
             play_count += 1
         elif play_choice == 5:
