@@ -352,10 +352,13 @@ def game_on():
             play_count += 1
         elif play_choice == 5:
             casino.print_history()
+            play_count += 1
         elif play_choice == 6:
             print(f"Most cash you ever got is {casino.biggest_cash()}$")
+            play_count += 1
         elif play_choice == 7:
             print(casino.most_common_cash())
+            play_count += 1
         else:
             print("You pick the wrong number")
             raise WrongNumberError(f"You picked {play_choice} there are 7 choices")
