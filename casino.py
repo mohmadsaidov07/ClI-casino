@@ -8,9 +8,9 @@ import sys
 import time
 import functools
 import os
-from dice_img import dice_ascii
-from coin_img import coin_ascii
-from RPS_img import rock_paper_scissors_ascii
+from dice_ascii import dice_ascii
+from coin_ascii import coin_ascii
+from RPS_ascii import rock_paper_scissors_ascii
 
 AGREE: Tuple[str] = (
     "y",
@@ -86,6 +86,20 @@ class Casino:
         for row in generator_object:
             print(row)
 
+    class PoorFuckError(Exception):
+        def __init__(self, message):
+            self.message = message
+
+    def testcase(self, bet):
+        if self.money <= 0:
+            os.system("cls" if os.name == "nt" else "clear")
+            raise self.PoorFuckError("Sry you're brokie")
+        elif bet > self.money:
+            return False
+        else:
+            return True
+
+
     def update_history(self, curr_game, bet) -> None:
         with open(path, "a") as csvfile:
             now = datetime.now()
@@ -132,10 +146,8 @@ class Casino:
         return f"Your most common cash amount is {most_common_cash[0]} you had it {most_common_cash[1]} times"
 
     def dice_game(self, bet: int, predict: int) -> str:
-        if self.money <= 0:
-            return "You ain't got no money pal"
-        elif self.money < bet:
-            return f"Your bet {bet} you've to bet less than {self.money}"
+        if self.testcase(bet) == False:
+            return f"Bet is too high, bet {bet}, cash {self.money}"
         dice: int = randint(1, 6)
         if predict == dice:
             self.money = bet * 6 + self.money
@@ -148,13 +160,9 @@ class Casino:
         return f"Dice rolled {dice} your prediction was {predict} and your balance is {self.money}"
 
     def flip_coin(self, bet: int, predict: str) -> str:
-        class NoMoneyError(Exception):
-            def __init__(self, message):
-                self.message = message
-
-        if bet > self.money:
-            raise NoMoneyError("You bet too much")
-
+        if self.testcase(bet) == False:
+            return f"Bet is too high, bet {bet}, cash {self.money}"
+        
         heads: List[str] = ["heads", "h", "head", "1", "0"]
         tails: List[str] = ["tails", "t", "tail", "2"]
         coin: int = choice(["heads", "tails"])
@@ -174,6 +182,9 @@ class Casino:
         return f"Your prediction was {predict}, coin dropped {coin}, your balance is {self.money}"
 
     def rock_paper_scissors(self, bet: int, predict: str) -> str:
+        if self.testcase(bet) == False:
+            return f"Bet is too high, bet {bet}, cash {self.money}"
+        
         options_power = {"rock": "scissors", "scissors": "paper", "paper": "rock"}
         robots_choice = choice(["rock", "paper", "scissors"])
         if options_power[predict] == robots_choice:
